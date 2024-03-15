@@ -1,10 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const appContext = createContext();
-const getInitialDarkMode = () =>{
-  const prefersDarkMode = window.matchMedia('(prefers-color-schema:dark)').matches
-  return prefersDarkMode;
-}
+const getInitialDarkMode = () => {
+  const prefersDarkMode = window.matchMedia(
+    "(prefers-color-schema:dark)"
+  ).matches;
+  const storedDarkMode = localStorage.getItem("darkTheme") === "true";
+  return storedDarkMode || prefersDarkMode;
+};
 
 export const AppProvider = ({ children }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(getInitialDarkMode());
@@ -12,11 +15,12 @@ export const AppProvider = ({ children }) => {
   const toggleDarkTheme = () => {
     const newTheme = !isDarkTheme;
     setIsDarkTheme(newTheme);
+    localStorage.setItem("darkTheme", newTheme);
   };
-  useEffect(()=>{
-    console.log(isDarkTheme)
-    document.body.classList.toggle('dark-theme',isDarkTheme)
-  },[isDarkTheme])
+  useEffect(() => {
+    console.log(isDarkTheme);
+    document.body.classList.toggle("dark-theme", isDarkTheme);
+  }, [isDarkTheme]);
   return (
     <appContext.Provider
       value={{
